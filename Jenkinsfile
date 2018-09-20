@@ -1,10 +1,21 @@
 pipeline {
     agent any
-    stages{
-        stage('Build'){
+
+    parameters {
+        string(name: 'tomcat_local_dev', defaultValue: 'localhost', description: 'Staging Server')
+        string(name: 'tomcat_aws_prod', defaultValue: '172.31.23.201', description: 'Production Server')
+    }
+
+    triggers {
+        pollSCM('H/2 * * * *')
+    }
+
+    stages {
+        stage('Build') {
             steps {
                 sh 'mvn clean package'
             }
+
             post {
                 success {
                     echo 'Now Archiving...'
@@ -12,29 +23,24 @@ pipeline {
                 }
             }
         }
-        stage('Deploy to Staging') {
-            steps {
-                build job: 'pipeline-deploy-to-staging'
-            }
-        }
-        stage('Deploy to Production') {
-            steps {
-                timeout(time:5, unit:'DAYS') {
-                    input message: 'Approve PRODUCTION Deployment?'
+
+        stage('Deployments') {
+            parallel {
+                stage('Deploy to Staging') {
+                    steps {
+                        sh "cp **/target/*.war ${params.tomcat_local_dev}:/opt/tomcat-staging/webapps"
+
+                    }
                 }
+                stage('Deploy to AWS Production') {
+                    steps {
+                        sh "scp -i /home/vagrant/.ssh/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_aws_prod}:/var/lib/tomcat7/webapps"
 
-                build job: 'pipeline-deploy-to-prod'
-            }
-
-            post {
-                success {
-                    echo 'Code deployed to Production.'
-                }
-
-                failure {
-                    echo 'Deployment failed'
+                    }
                 }
             }
         }
+
     }
+
 }
