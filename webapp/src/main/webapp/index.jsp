@@ -1,1 +1,1 @@
-Hello, World! Version 2 by serenotus
+Hello, World! Version 2 by seren
