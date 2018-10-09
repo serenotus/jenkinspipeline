@@ -14,37 +14,6 @@ pipeline {
 
     
     stages {
-        /*
-        stage('Build') {
-            steps {
-                sh 'mvn clean package'
-            }
-
-            post {
-                success {
-                    echo 'Now Archiving...'
-                    archiveArtifacts artifacts: '**/target/*.war'
-                }
-            }
-        }
-
-        stage('Deployments') {
-            parallel {
-                stage('Deploy to Staging') {
-                    steps {
-                        sh "cp **/target/*.war /opt/tomcat-staging/webapps"
-
-                    }
-                }
-                stage('Deploy to AWS Production') {
-                    steps {
-                        sh "scp -i /home/jenkins/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_aws_prod}:/var/lib/tomcat7/webapps"
-
-                    }
-                }
-            }
-        }*/
-
         stage('Notification') {
             steps {
                 parrallel (
