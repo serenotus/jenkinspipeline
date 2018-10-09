@@ -1,5 +1,5 @@
 #!groovy
-def props = readProperties file: './config/test.properties'
+def props = readProperties file: 'config/test.properties'
 pipeline {
     agent any
 
