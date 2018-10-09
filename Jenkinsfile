@@ -8,10 +8,12 @@ pipeline {
     }
 
     triggers {
-        pollSCM('H/2 * * * *')
+        pollSCM('H * * * *')
     }
 
+    
     stages {
+        /*
         stage('Build') {
             steps {
                 sh 'mvn clean package'
@@ -39,6 +41,20 @@ pipeline {
 
                     }
                 }
+            }
+        }*/
+
+        def props = readProperties file: './config/test.properties'
+        stage('Notification') {
+            steps {
+                parrallel (
+                    line : {
+                        echo 'token: props.LineToken'
+                    },
+                    slack: {
+
+                    }
+                )
             }
         }
 
