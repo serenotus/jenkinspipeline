@@ -1,4 +1,5 @@
 #!groovy
+def props = readProperties file: './config/test.properties'
 pipeline {
     agent any
 
@@ -44,7 +45,6 @@ pipeline {
             }
         }*/
 
-        def props = readProperties file: './config/test.properties'
         stage('Notification') {
             steps {
                 parrallel (
